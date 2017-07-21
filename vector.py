@@ -1,5 +1,5 @@
 '''
-This module is a collection of functions for vector manipulation.
+This module is a collection of functions for working with vectors.
 '''
 from math import sqrt, acos, pi
 from decimal import Decimal, getcontext
@@ -9,7 +9,7 @@ getcontext().prec = 30
 
 class Vector(object):
     '''
-    This class is a collection of functions for vector manipulation.
+    This class is a collection of functions for working with vectors.
     '''
     # Error messages
     CANNOT_NORMALIZE_ZERO_VECTOR_MSG = 'Cannot normalize a zero vector.'
