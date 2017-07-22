@@ -19,7 +19,7 @@ class Plane(object):
         self.dimension = 3
 
         if not normal_vector:
-            all_zeros = ['0']*self.dimension
+            all_zeros = ['0'] * self.dimension
             normal_vector = Vector(all_zeros)
         self.normal_vector = normal_vector
 
@@ -152,7 +152,7 @@ class Plane(object):
         '''
         Checks if two planes are parallel.
 
-        :param Line p: second line
+        :param Plane p: second plane
         :return: whether the two lines are parallel
         :rtype: Boolean
         '''
@@ -162,7 +162,7 @@ class Plane(object):
         '''
         Checks if two planes are orthogonal.
 
-        :param Line p: second plane
+        :param Plane p: second plane
         :return: whether the two lines are orthogonal
         :rtype: Boolean
         '''
