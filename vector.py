@@ -1,7 +1,7 @@
 '''
 This module is a collection of functions for working with vectors.
 '''
-from math import sqrt, acos, pi
+from math import sqrt, acos, fabs, modf, pi
 from decimal import Decimal, getcontext
 
 # Decimal precision
@@ -35,6 +35,24 @@ class Vector(object):
 
         except TypeError:
             raise TypeError('The coordinates must be an iterable')
+
+    def __iter__(self):
+        self.current = 0
+        return self
+
+    def __next__(self):
+        if self.current >= len(self.coords):
+            raise StopIteration
+        else:
+            current_value = self.coords[self.current]
+            self.current += 1
+            return current_value
+
+    def __len__(self):
+        return len(self.coords)
+
+    def __getitem__(self, i):
+        return self.coords[i]
 
     def __str__(self):
         return 'Vector: {}'.format(self.coords)
@@ -72,7 +90,7 @@ class Vector(object):
         :return: scalar product
         :rtype: Vector
         '''
-        new_coords = [x * c for x in self.coords]
+        new_coords = [x * Decimal(c) for x in self.coords]
         return Vector(new_coords)
 
     def magnitude(self):
@@ -113,6 +131,7 @@ class Vector(object):
 
         :param Vector v: second vector
         :param str unit: 'rad' (radians) or 'deg' (degrees)
+        :param float tolerance: precision tolerance
         :return: angle in radians or degrees
         :rtype: Decimal
         :raises Exception: if one of the vectors is a zero vector
@@ -120,7 +139,8 @@ class Vector(object):
         try:
             self_norm = self.normalize()
             v_norm = v.normalize()
-            angle = acos(self_norm.dot_multiply(v_norm))
+            cosang = min(1, max(self_norm.dot_multiply(v_norm), -1))
+            angle = acos(cosang)
             return {
                 'rad': angle,
                 'deg': angle * 180 / pi

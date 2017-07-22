@@ -4,8 +4,8 @@ This module is a collection of functions for working with planes.
 from decimal import Decimal, getcontext
 from vector import Vector
 
+# Decimal precision
 getcontext().prec = 30
-
 
 class Plane(object):
     '''
@@ -93,7 +93,6 @@ class Plane(object):
         output += ' = {}'.format(constant)
 
         return output
-    
 
     def __eq__(self, p):
         '''
@@ -124,6 +123,30 @@ class Plane(object):
         # Only need to check one, as we know the lines are parallel
         return basepoint_diff.is_orthogonal(self.normal_vector)
 
+    def __iter__(self):
+        self.current = 0
+        return self
+
+    def __next__(self):
+        if self.current >= len(self.normal_vector):
+            raise StopIteration
+        else:
+            current_value = self.normal_vector[self.current]
+            self.current += 1
+            return current_value
+
+    def __len__(self):
+        return len(self.normal_vector)
+
+    def __getitem__(self, i):
+        return self.normal_vector[i]
+
+    @staticmethod
+    def first_nonzero_index(iterable):
+        for k, item in enumerate(iterable):
+            if not MyDecimal(item).is_near_zero():
+                return k
+        raise Exception(Plane.NO_NONZERO_ELTS_FOUND_MSG)
 
     def is_parallel(self, p):
         '''
@@ -135,7 +158,6 @@ class Plane(object):
         '''
         return self.normal_vector.is_parallel(p.normal_vector)
 
-
     def is_orthogonal(self, p):
         '''
         Checks if two planes are orthogonal.
@@ -145,15 +167,6 @@ class Plane(object):
         :rtype: Boolean
         '''
         return self.normal_vector.is_orthogonal(p.normal_vector)
-
-
-    @staticmethod
-    def first_nonzero_index(iterable):
-        for k, item in enumerate(iterable):
-            if not MyDecimal(item).is_near_zero():
-                return k
-        raise Exception(Plane.NO_NONZERO_ELTS_FOUND_MSG)
-
 
 class MyDecimal(Decimal):
     def is_near_zero(self, eps=1e-10):

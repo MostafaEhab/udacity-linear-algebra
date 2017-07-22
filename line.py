@@ -4,6 +4,7 @@ This module is a collection of functions for working with lines.
 from decimal import Decimal, getcontext
 from vector import Vector
 
+# Decimal precision
 getcontext().prec = 30
 
 class Line(object):
@@ -27,10 +28,9 @@ class Line(object):
 
         self.set_basepoint()
 
-
     def set_basepoint(self):
         try:
-            n = self.normal_vector.coords
+            n = self.normal_vector
             c = self.constant_term
             basepoint_coords = ['0'] * self.dimension
 
@@ -46,6 +46,30 @@ class Line(object):
             else:
                 raise e
 
+    def __iter__(self):
+        self.current = 0
+        return self
+
+    def __next__(self):
+        if self.current >= len(self.normal_vector):
+            raise StopIteration
+        else:
+            current_value = self.normal_vector[self.current]
+            self.current += 1
+            return current_value
+
+    def __len__(self):
+        return len(self.normal_vector)
+
+    def __getitem__(self, i):
+        return self.normal_vector[i]
+
+    @staticmethod
+    def first_nonzero_index(iterable):
+        for k, item in enumerate(iterable):
+            if not MyDecimal(item).is_near_zero():
+                return k
+        raise Exception(Line.NO_NONZERO_ELTS_FOUND_MSG)
 
     def __str__(self):
 
@@ -71,7 +95,7 @@ class Line(object):
 
             return output
 
-        n = self.normal_vector.coords
+        n = self.normal_vector
 
         try:
             initial_index = Line.first_nonzero_index(n)
@@ -121,13 +145,6 @@ class Line(object):
         # Only need to check one, as we know the lines are parallel
         return basepoint_diff.is_orthogonal(self.normal_vector)
 
-    @staticmethod
-    def first_nonzero_index(iterable):
-        for k, item in enumerate(iterable):
-            if not MyDecimal(item).is_near_zero():
-                return k
-        raise Exception(Line.NO_NONZERO_ELTS_FOUND_MSG)
-
     def is_parallel(self, l):
         '''
         Checks if two lines are parallel.
@@ -156,7 +173,7 @@ class Line(object):
         :return: Intersection coordinates, infinity or nothing
         :rtype: Vector or Line or None
         '''
-        if self.__eq__(l):
+        if self == l:
             return self
         elif self.is_parallel(l):
             return None
